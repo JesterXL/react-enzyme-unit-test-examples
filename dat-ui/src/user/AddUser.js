@@ -22,6 +22,11 @@ const errorTextStyle = {
     color: '#F44336'
 }
 
+const setState = (self, o) => {
+    self.setState(o)
+    return o
+}
+
 export class AddUser extends React.Component {
 
     constructor(props) {
@@ -35,12 +40,12 @@ export class AddUser extends React.Component {
       }
     }
 
-    onUsernameChange = event => this.setState({ username: event.target.value })
+    onUsernameChange = event => setState(this, { username: event.target.value })
     onUsernameBlur = event => {
         const username = event.target.value
         return validUsername(username).matchWith({
-            Failure: ({value}) => this.setState({username, usernameErrors: value.join(' '), clean: false}),
-            Success: () => this.setState({username, usernameErrors: undefined, clean: false})
+            Failure: ({value}) => setState(this, {username, usernameErrors: value.join(' '), clean: false}),
+            Success: () => setState(this, {username, usernameErrors: undefined, clean: false})
         })
     }
     onEmailChange = event => this.setState({ email: event.target.value })

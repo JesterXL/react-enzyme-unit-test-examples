@@ -18,7 +18,7 @@ describe('user/AddUser.js', ()=> {
       div);
     ReactDOM.unmountComponentAtNode(div);
   });
-  describe('onUsernameBlur when called', () => {
+  describe('onUsernameBlur when triggered', () => {
     it('should work when you input valid value', ()=> {
       const addUser = shallow(<AddUser />)
       addUser.find('[floatingLabelText="Username"]').simulate('blur', {target: {value: 'sup'}})
@@ -28,6 +28,23 @@ describe('user/AddUser.js', ()=> {
       const addUser = shallow(<AddUser />)
       addUser.find('[floatingLabelText="Username"]').simulate('blur', {target: {value: ' '}})
       expect(addUser.state('usernameErrors')).toEqual('Cannot be a blank string.')
+    })
+  })
+  describe('onUsernameBlur when called', () => {
+    it('should work when you input valid value', ()=> {
+      const addUser = shallow(<AddUser />)
+      const result = addUser.instance().onUsernameBlur({target: {value: 'sup'}})
+      expect(result.usernameErrors).toEqual(undefined)
+    })
+    it('should fail when text is blank', ()=> {
+      const addUser = shallow(<AddUser />)
+      const result = addUser.instance().onUsernameBlur({target: {value: ' '}})
+      expect(result.usernameErrors).toEqual('Cannot be a blank string.')
+    })
+    it.skip('should fail when text is undefined', ()=> {
+      const addUser = shallow(<AddUser />)
+      const result = addUser.instance().onUsernameBlur({target: {value: undefined}})
+      expect(result.usernameErrors).toEqual(`Empty strings aren't allowed. Username needs to be at least 1 character. Username cannot be larger than 255 characters.`)
     })
   })
 })
