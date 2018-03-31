@@ -3,7 +3,7 @@ import {Card, CardActions, CardTitle, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import fetch from 'cross-fetch';
-import { every, some } from 'lodash/fp'
+import { every, some, curry } from 'lodash/fp'
 import {
     validUsername,
     validEmail,
@@ -27,6 +27,14 @@ const setState = (self, o) => {
     return o
 }
 
+export const onUsernameBlur = curry((self, event) => {
+    const username = event.target.value
+    return validUsername(username).matchWith({
+        Failure: ({value}) => setState(self, {username, usernameErrors: value.join(' '), clean: false}),
+        Success: () => setState(self, {username, usernameErrors: undefined, clean: false})
+    })
+})
+
 export class AddUser extends React.Component {
 
     constructor(props) {
@@ -41,13 +49,7 @@ export class AddUser extends React.Component {
     }
 
     onUsernameChange = event => setState(this, { username: event.target.value })
-    onUsernameBlur = event => {
-        const username = event.target.value
-        return validUsername(username).matchWith({
-            Failure: ({value}) => setState(this, {username, usernameErrors: value.join(' '), clean: false}),
-            Success: () => setState(this, {username, usernameErrors: undefined, clean: false})
-        })
-    }
+    
     onEmailChange = event => this.setState({ email: event.target.value })
     onEmailBlur = event => {
         const email = event.target.value
@@ -134,7 +136,7 @@ export class AddUser extends React.Component {
                 <CardTitle title="Sign Up" subtitle="Beware! The valiations below are t3h brutal." />
                 <CardText>
                     <p style={errorTextStyle}>{this.state.signUpError}</p><br/>
-                    <TextField floatingLabelText="Username" value={this.state.username} errorText={this.state.usernameErrors} onChange={this.onUsernameChange} onBlur={this.onUsernameBlur}
+                    <TextField floatingLabelText="Username" value={this.state.username} errorText={this.state.usernameErrors} onChange={this.onUsernameChange} onBlur={onUsernameBlur(this)}
                     /><br />
 
                     <TextField floatingLabelText="Email" value={this.state.email} hintText="jesterxl@jessewarden.com" errorText={this.state.emailErrors} onChange={this.onEmailChange} onBlur={this.onEmailBlur}
